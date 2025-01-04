@@ -1,0 +1,75 @@
+Security Architecture Daily Tasks for High-Resiliency Security Posture 🔒
+
+Welcome to my Senior Security Architecture Daily Tasks Guide! This README provides a structured list of essential tasks to maintain and enhance your organization's security posture. By diligently following these tasks, you ensure a high-resiliency environment to counter evolving threats.
+
+📄 Daily Tasks Checklist
+
+1. Threat Monitoring 🔍
+
+✅ Review real-time security logs from SIEM platforms (e.g., Splunk, Azure Sentinel, or similar tools).
+
+⚠️ Investigate alerts categorized as medium to high severity.
+
+🔒 Check for anomalous user activities such as multiple failed login attempts or unusual file access.
+
+2. Vulnerability Scanning 🧲
+
+✅ Perform a quick scan using your vulnerability management tool (e.g., Nessus, Qualys).
+
+🛠️ Update scanning configurations to include new IPs or services.
+
+⚡ Ensure identified vulnerabilities are escalated to the appropriate teams for remediation.
+
+3. Patch and Update Validation 🔧
+
+✅ Confirm successful deployment of scheduled OS and application patches.
+
+🔔 Cross-check patch status against endpoint devices.
+
+🔄 Manually verify updates on critical systems when necessary.
+
+4. Access Control Review 📌
+
+✅ Validate that new user access requests are compliant with the least-privilege principle.
+
+🔨 Check for stale or unused accounts and disable them promptly.
+
+⚖ Review temporary admin privileges and revert as scheduled.
+
+5. Backup Integrity Check 📂
+
+✅ Verify daily backup jobs were completed without errors.
+
+⚙ Ensure encryption is applied to all backup files.
+
+🏠 Test recovery procedures on a selected file or database weekly.
+
+🎮 Engagement and Awareness
+
+6. User Training 🕵️‍♂️
+
+✅ Send phishing simulation updates or reminders to users.
+
+📚 Share daily security tips via email or chat platforms.
+
+7. Collaboration with Teams 🔗
+
+🔄 Sync with DevOps or IT teams to ensure alignment with security requirements.
+
+✅ Provide updates on active incidents and resolutions.
+
+🔒 Tools to Use Daily
+
+SIEM Dashboard: Monitor and analyze security events.
+
+Vulnerability Scanners: Identify potential weaknesses.
+
+Endpoint Security Platforms: Detect endpoint anomalies and threats.
+
+Ticketing System: Document findings and assign remediation tasks.
+
+🎉 Celebrating Wins
+
+Security is a continuous process, and every day you mitigate risks is a step closer to a resilient organization. Celebrate small victories, such as blocking phishing attempts or swiftly resolving incidents. 🌟
+
+Together, we build stronger defenses! ⚔️
