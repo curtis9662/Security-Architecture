@@ -5,3 +5,4 @@ Dynamic Task List ☼☼☼→ https://github.com/curtis9662/SecurityArchitectur
 //
 
 See Project ☼☼☼→ https://github.com/users/curtis9662/projects/3
+Added SDLC Vulnerability Scanning, Validation, Remediation and Mitigation
