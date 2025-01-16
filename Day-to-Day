@@ -26,6 +26,10 @@ Welcome to my Senior Security Architecture Daily Tasks Guide! This README provid
 
 🔔 Cross-check patch status against endpoint devices.
 
+Problem: CISO (C-Suite) & Legal request monitoring and logging of a specific users environment activity related to outbound emails and sharing of organization IP data for the last <= 90days.
+
+Objective: Gather the Users Outbound Communications via Email in this context we will be utilizing Microsoft Defender Advanced Hunting and Microsoft Purview for eDiscovery..
+
 🔄 Manually verify updates on critical systems when necessary.
 
 4. Access Control Review 📌
