@@ -1,0 +1,11 @@
+Uitlizing the guidance from AWS we scholoarly follow https://docs.aws.amazon.com/lambda/latest/dg/lambda-security.html .
+Take Note of: WTH is 🐑da? https://docs.aws.amazon.com/lambda/latest/dg/welcome.html / Task that require /ROOT https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html#root-user-tasks
+😎 The Topics
+⪧ Data protection in AWS Lambda - https://docs.aws.amazon.com/lambda/latest/dg/security-dataprotection.html
+⪧ Identity and Access Management for AWS Lambda - https://docs.aws.amazon.com/lambda/latest/dg/security-iam.html
+⪧ Create a governance strategy for Lambda functions and layers
+⪧ Compliance validation for AWS Lambda
+⪧ Resilience in AWS Lambda
+⪧ Infrastructure security in AWS Lambda
+⪧ Securing workloads with public endpoints
+⪧ Using code signing to verify code integrity with Lambda
