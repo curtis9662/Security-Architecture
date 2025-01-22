@@ -1,0 +1,28 @@
+import boto3
+import json
+
+iam = boto3.client('iam')
+sns = boto3.client('sns')
+
+SNS_TOPIC_ARN = "arn:aws:sns:REGION:ACCOUNT_ID:TOPIC_NAME"
+
+def lambda_handler(event, context):
+    username = event['detail']['userIdentity']['userName']
+    
+    # Disable user
+    try:
+        iam.update_login_profile(
+            UserName=username,
+            PasswordResetRequired=True
+        )
+        message = f"Suspicious login activity detected for {username}. Account disabled."
+    except Exception as e:
+        message = f"Failed to disable user {username}: {str(e)}"
+    
+    # Send SNS alert
+    sns.publish(
+        TopicArn=SNS_TOPIC_ARN,
+        Subject="Suspicious Activity Alert",
+        Message=message
+    )
+    return {"status": message}

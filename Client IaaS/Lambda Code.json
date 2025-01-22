@@ -1,0 +1,31 @@
+import boto3
+import json
+
+s3 = boto3.client('s3')
+sns = boto3.client('sns')
+
+SNS_TOPIC_ARN = "arn:aws:sns:REGION:ACCOUNT_ID:TOPIC_NAME"
+
+def lambda_handler(event, context):
+    bucket_name = event['detail']['requestParameters']['bucketName']
+    
+    # Check if the bucket is public
+    acl = s3.get_bucket_acl(Bucket=bucket_name)
+    for grant in acl['Grants']:
+        if grant['Grantee']['Type'] == 'Group' and 'AllUsers' in grant['Grantee']['URI']:
+            # Revoke public access
+            s3.put_bucket_acl(
+                Bucket=bucket_name,
+                ACL='private'
+            )
+            message = f"Public access removed for bucket: {bucket_name}"
+            
+            # Send SNS alert
+            sns.publish(
+                TopicArn=SNS_TOPIC_ARN,
+                Subject="S3 Public Access Alert",
+                Message=message
+            )
+            return {"status": "Public access revoked and alert sent"}
+    
+    return {"status": "Bucket access is secure"}
