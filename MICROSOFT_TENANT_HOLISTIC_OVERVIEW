@@ -1,0 +1,133 @@
+<#
+.SYNOPSIS
+    <🚀>- Developed by Curtis Jones (Blactec.biz).
+
+.DESCRIPTION
+    [Script Description]: Microsoft 365 Holistic Overview This script provides a rapid, read-only assessment of an M365 tenant using the Microsoft Graph API. It is designed to give Security Architects and Admins immediate situational awareness by scanning:
+
+Identity: User demographics (Guests, Disabled) and Global Admin count.
+
+Licensing: SKU utilization and assignment efficiency.
+
+Security: Current Secure Score and Device OS breakdown.
+Graph-Based Tenant Health Check Automated enumeration of critical M365 metrics. Uses least-privilege *.Read.All scopes to construct a holistic dashboard of tenant health, focusing on Identity risks, Admin privileges, and security baseline adherence (Secure Score).
+    
+    Part of the Blactec Security Architecture portfolio. Designed for secure 
+    Hybrid-Cloud implementation, IAM automation, and Zero Trust adherence.
+
+.PARAMETER <ParameterName>
+    [Description]
+
+.EXAMPLE
+    .\Script-Name.ps1 -Parameter Value or Full Block insert
+
+.NOTES
+    Author:       Curtis Jones (Msc, CISSP, OSCP)
+    Role:         Sr. Security Architect & IAM Strategist
+    Lab Env:      Blactec Cyber Threat Monitoring
+    Website:      https://curtis9662.github.io/
+    GitHub:       github.com/curtis9662
+    Copyright:    (c) 2025-2026 Curtis Jones. All rights reserved.
+    Dev Level:    PROD
+    
+.LINK
+    https://curtis9662.github.io/
+#>
+
+
+# Define the scopes for a holistic read-only view
+$Scopes = @(
+    "User.Read.All"             # View Users
+    "Directory.Read.All"        # View Roles/Admins
+    "Device.Read.All"           # View Devices
+    "Organization.Read.All"     # View Tenant Info
+    "SecurityEvents.Read.All"   # View Secure Score
+)
+
+# Connect to Graph
+Connect-MgGraph -Scopes $Scopes -NoWelcome
+Write-Host "✅ Connected to Microsoft Graph" -ForegroundColor Green
+
+Start-Sleep 30
+
+
+Write-Host "🔍 Scanning Identity..." -ForegroundColor Cyan
+
+# 1. User Demographics
+$AllUsers = Get-MgUser -All -Property UserType, AccountEnabled, DisplayName, UserPrincipalName
+$TotalUsers = $AllUsers.Count
+$Guests = ($AllUsers | Where-Object { $_.UserType -eq 'Guest' }).Count
+$Disabled = ($AllUsers | Where-Object { $_.AccountEnabled -eq $false }).Count
+
+# 2. Privileged Access (Global Admins)
+# We must first find the Role ID for "Global Administrator"
+$GlobalAdminRole = Get-MgDirectoryRole -Filter "DisplayName eq 'Global Administrator'" -ErrorAction SilentlyContinue
+
+# If the role hasn't been activated/used, it might not show up in the list. 
+# If found, get members:
+if ($GlobalAdminRole) {
+    $GlobalAdmins = Get-MgDirectoryRoleMember -DirectoryRoleId $GlobalAdminRole.Id
+    $GlobalAdminCount = $GlobalAdmins.Count
+} else {
+    $GlobalAdminCount = "Unknown (Role not enumerated)"
+}
+
+$IdentityObject = [PSCustomObject]@{
+    'Total Users'    = $TotalUsers
+    'Guest Accounts' = $Guests
+    'Disabled Users' = $Disabled
+    'Global Admins'  = $GlobalAdminCount
+} 
+Start-Sleep 30
+
+Write-Host "🔍 Scanning Licenses..." -ForegroundColor Cyan
+
+$Licenses = Get-MgSubscribedSku -All | Select-Object SkuPartNumber, ConsumedUnits, @{N='TotalUnits';E={$_.PrepaidUnits.Enabled}}
+
+# Calculate utilization
+$LicenseReport = $Licenses | ForEach-Object {
+    [PSCustomObject]@{
+        'License Name'   = $_.SkuPartNumber
+        'Assigned'       = $_.ConsumedUnits
+        'Available'      = $_.TotalUnits
+        'Utilization %'  = if ($_.TotalUnits -gt 0) { [math]::Round(($_.ConsumedUnits / $_.TotalUnits) * 100, 1) } else { 0 }
+    }
+}
+
+Write-Host "🔍 Scanning Devices & Security..." -ForegroundColor Cyan
+
+# 1. Device Counts
+$AllDevices = Get-MgDevice -All -Property OperatingSystem
+$DeviceSummary = $AllDevices | Group-Object OperatingSystem | Select-Object Name, Count
+
+# 2. Security Score (Requires SecurityEvents.Read.All)
+try {
+    $SecureScore = Get-MgSecuritySecureScore -Top 1 -Sort "createdDateTime desc"
+    $CurrentScore = $SecureScore.CurrentScore
+    $MaxScore = $SecureScore.MaxScore
+    $PercentSecure = [math]::Round(($CurrentScore / $MaxScore) * 100, 2)
+} catch {
+    $CurrentScore = "Error retrieving"
+    $PercentSecure = "N/A"
+}
+
+Start-Sleep 30
+
+Write-Host "`n============================================="
+Write-Host "   MICROSOFT TENANT HOLISTIC OVERVIEW"
+Write-Host "=============================================" -ForegroundColor Yellow
+
+Write-Host "`n--- IDENTITY ---" -ForegroundColor Cyan
+$IdentityObject | Format-List
+
+Write-Host "--- SECURITY POSTURE ---" -ForegroundColor Cyan
+Write-Host "Current Secure Score: $CurrentScore / $MaxScore ($PercentSecure%)"
+
+Write-Host "`n--- LICENSING UTILIZATION ---" -ForegroundColor Cyan
+$LicenseReport | Format-Table -AutoSize
+
+Write-Host "`n--- DEVICE INVENTORY ---" -ForegroundColor Cyan
+$DeviceSummary | Format-Table -AutoSize
+
+
+Start-Sleep 30
