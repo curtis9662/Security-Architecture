@@ -1,6 +1,6 @@
 Write-Host "Curtis' CISSP ISO27001 | HITRUST Validator" -ForegroundColor Cyan
 
-# Blactec CISSP 8 Domain System Configuration Tool
+# Curtis' CISSP 8 Domain System Configuration Tool
 # ISO 27001 & HITRUST Compliant PowerShell GUI App
 
 Add-Type -AssemblyName System.Windows.Forms
@@ -139,3 +139,4 @@ Function Export-InventoryToHTML {
 }
 
 Show-InventoryGUI
+
