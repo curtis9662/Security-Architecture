@@ -1,0 +1,10 @@
+// Audit Microsoft Authenticator Usage and Fraud Reports
+SigninLogs
+| where TimeGenerated > ago(7d)
+| where AuthenticationDetails has "Microsoft Authenticator"
+| extend AuthMethod = tostring(parse_json(AuthenticationDetails)[0].authenticationMethod)
+| extend AuthStepResult = tostring(parse_json(AuthenticationDetails)[0].authenticationStepResultDetails)
+| project TimeGenerated, UserPrincipalName, Location, AuthMethod, ResultType, AuthStepResult, AppDisplayName
+// Filter for specific failure types indicating user denied the push (Fraud or Mistake)
+| where ResultType != 0
+| sort by TimeGenerated desc
